@@ -12,7 +12,7 @@ Vagrant.configure("2") do |config|
 
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://vagrantcloud.com/search.
-  config.vm.box = "generic/centos7"
+  config.vm.box = "centos/7"
 
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
@@ -109,7 +109,7 @@ Vagrant.configure("2") do |config|
 	useradd $USERNAME
 	mkdir -p /home/$USERNAME/.ssh
 
-    cp /vagrant/ssh/* /home/$USERNAME/.ssh
+        cp /vagrant/ssh/* /home/$USERNAME/.ssh
 	chown -R ${USERNAME}:${USERNAME} /home/$USERNAME/.ssh
 	chmod 600 /home/$USERNAME/.ssh/id_rsa
 	chmod 644 /home/$USERNAME/.ssh/id_rsa.pub
@@ -124,41 +124,6 @@ DOCKER
 	# only vagrant user is allowed to sudo to root and execute all commands as root
 	# so we allow ourselves to connect as vagrant user over ssh
 	cat /home/$USERNAME/.ssh/authorized_keys >> /home/vagrant/.ssh/authorized_keys
-	
-	########################
-	#       BACK END 
-	########################  
-	#mkdir -p /opt/carpool
-	#cd /opt/carpool
-	#git clone https://github.com/voteamerica/backend.git
-	#cd backend
-	
-	# looks like there are some iptables issues with docker networking
-	# issue is that it's not possible to perform name resolution 
-	# from inside the container to a name on internet
-	# remember it's like this Container->VirtualBox VM->Windows->Router NAT
-	# Anyway, my lack of understanding of this issue 
-	# is acceptable when all we need to do stop the firewall and restart docker service
-	systemctl stop firewalld
-	systemctl stop docker
-	systemctl start docker
-	
-	#/usr/local/bin/docker-compose -f docker-compose-build.yml build
-	
-	systemctl stop docker
-	systemctl start firewalld
-	systemctl start docker
-	systemctl enable docker
-	
-	
-	# allow olny https, not http incoming traffic
-	systemctl enable firewalld
-	systemctl start firewalld
-	firewall-cmd --remove-service=http
-	firewall-cmd --add-service=https
-	firewall-cmd --runtime-to-permanent
-	
-	
 	
 SHELL
   
